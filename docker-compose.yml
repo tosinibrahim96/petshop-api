@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    image: petshop-api-app
+    container_name: petshop-api-app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/app/php-local.ini:/usr/local/etc/php/conf.d/php-local.ini
+    networks:
+      - petshop-api
+
+  webserver:
+    build:
+      context: ./docker/webserver
+      dockerfile: Dockerfile
+    image: nginx
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/webserver/nginx.conf:/etc/nginx/conf.d/nginx.conf
+    networks:
+      - petshop-api
+
+  db:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: petshop
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - petshop-api
+
+networks:
+  petshop-api:
+
+volumes:
+  dbdata:
