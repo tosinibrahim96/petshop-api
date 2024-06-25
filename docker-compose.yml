@@ -12,6 +12,7 @@ services:
     volumes:
       - .:/var/www
       - ./docker/app/php-local.ini:/usr/local/etc/php/conf.d/php-local.ini
+      - ./vendor:/var/www/vendor
     networks:
       - petshop-api
 

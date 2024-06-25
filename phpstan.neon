@@ -1,0 +1,11 @@
+includes:
+    - vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+    level: 9
+
+    # Optional: If you have specific files to ignore or specific settings, you can add them here
+    # ignoreErrors:
+    #    - '#Some error pattern to ignore#'
