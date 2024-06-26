@@ -57,4 +57,14 @@ class User extends Authenticatable
     {
         return ['uuid'];
     }
+
+     /**
+     * Get UUID
+     *
+     * @return string
+     */
+    public function getUUID(): string
+    {
+        return $this->uuid;
+    }
 }
