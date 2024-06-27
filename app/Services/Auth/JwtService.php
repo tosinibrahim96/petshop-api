@@ -52,16 +52,11 @@ class JwtService
         $builder = $this->config->builder()
             ->issuedBy(config('app.url'))
             ->relatedTo((string) $claims['sub'])
+            ->withClaim('claims', $claims)
             ->identifiedBy(bin2hex(random_bytes(16)))
             ->issuedAt($now)
             ->canOnlyBeUsedAfter($now)
             ->expiresAt($now->modify('+' . config('jwt.expiration') . ' hour'));
-
-        foreach ($claims as $key => $value) {
-            if ($key !== 'sub' && !empty($key)) {
-                $builder->withClaim($key, $value);
-            }
-        }
 
         return $builder->getToken($this->config->signer(), $this->config->signingKey())->toString();
     }

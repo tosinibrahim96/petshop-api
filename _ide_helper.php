@@ -1766,6 +1766,39 @@ namespace Illuminate\Support\Facades {
             /**
      * 
      *
+     * @method static bool once(array $credentials = [])
+     * @method static void login(\Illuminate\Contracts\Auth\Authenticatable $user, bool $remember = false)
+     * @method static \Illuminate\Contracts\Auth\Authenticatable|false loginUsingId(mixed $id, bool $remember = false)
+     * @method static \Illuminate\Contracts\Auth\Authenticatable|false onceUsingId(mixed $id)
+     * @method static bool viaRemember()
+     * @method static void logout()
+     * @method static \Symfony\Component\HttpFoundation\Response|null basic(string $field = 'email', array $extraConditions = [])
+     * @method static \Symfony\Component\HttpFoundation\Response|null onceBasic(string $field = 'email', array $extraConditions = [])
+     * @method static bool attemptWhen(array $credentials = [], array|callable|null $callbacks = null, bool $remember = false)
+     * @method static void logoutCurrentDevice()
+     * @method static \Illuminate\Contracts\Auth\Authenticatable|null logoutOtherDevices(string $password)
+     * @method static void attempting(mixed $callback)
+     * @method static \Illuminate\Contracts\Auth\Authenticatable getLastAttempted()
+     * @method static string getName()
+     * @method static string getRecallerName()
+     * @method static \Illuminate\Auth\SessionGuard setRememberDuration(int $minutes)
+     * @method static \Illuminate\Contracts\Cookie\QueueingFactory getCookieJar()
+     * @method static void setCookieJar(\Illuminate\Contracts\Cookie\QueueingFactory $cookie)
+     * @method static \Illuminate\Contracts\Events\Dispatcher getDispatcher()
+     * @method static void setDispatcher(\Illuminate\Contracts\Events\Dispatcher $events)
+     * @method static \Illuminate\Contracts\Session\Session getSession()
+     * @method static \Illuminate\Contracts\Auth\Authenticatable|null getUser()
+     * @method static \Symfony\Component\HttpFoundation\Request getRequest()
+     * @method static \Illuminate\Auth\SessionGuard setRequest(\Symfony\Component\HttpFoundation\Request $request)
+     * @method static \Illuminate\Support\Timebox getTimebox()
+     * @method static \Illuminate\Contracts\Auth\Authenticatable authenticate()
+     * @method static \Illuminate\Auth\SessionGuard forgetUser()
+     * @method static \Illuminate\Contracts\Auth\UserProvider getProvider()
+     * @method static void setProvider(\Illuminate\Contracts\Auth\UserProvider $provider)
+     * @method static void macro(string $name, object|callable $macro, object|callable $macro = null)
+     * @method static void mixin(object $mixin, bool $replace = true)
+     * @method static bool hasMacro(string $name)
+     * @method static void flushMacros()
      * @see \Illuminate\Auth\AuthManager
      * @see \Illuminate\Auth\SessionGuard
      */        class Auth {
@@ -1949,448 +1982,99 @@ namespace Illuminate\Support\Facades {
                     /**
          * Get the currently authenticated user.
          *
-         * @return \App\Models\User|null 
+         * @return mixed|null The authenticated user or null if not authenticated.
          * @static 
          */        public static function user()
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
+                        /** @var \App\Services\Auth\JwtGuard $instance */
                         return $instance->user();
         }
                     /**
-         * Get the ID for the currently authenticated user.
+         * Get the token for the current request.
          *
-         * @return int|string|null 
+         * @return string|null The token from the request or null if not present.
          * @static 
-         */        public static function id()
+         */        public static function getTokenForRequest()
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->id();
+                        /** @var \App\Services\Auth\JwtGuard $instance */
+                        return $instance->getTokenForRequest();
         }
                     /**
-         * Log a user into the application without sessions or cookies.
+         * Attempt to authenticate a user with the given credentials.
+         * 
+         * If authentication is successful and $login is true, a JWT token will be generated and returned.
+         * Otherwise, it will return true if authentication is successful and false otherwise.
          *
-         * @param array $credentials
-         * @return bool 
+         * @param array<string, mixed> $credentials The user credentials for authentication.
+         * @param bool $login Whether to generate and return a JWT token upon successful authentication.
+         * @return bool Returns false if authentication fails, true if authentication succeeds.
          * @static 
-         */        public static function once($credentials = [])
+         */        public static function attempt($credentials = [], $login = true)
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->once($credentials);
+                        /** @var \App\Services\Auth\JwtGuard $instance */
+                        return $instance->attempt($credentials, $login);
         }
                     /**
-         * Log the given user ID into the application without sessions or cookies.
+         * Validate user credentials.
          *
-         * @param mixed $id
-         * @return \App\Models\User|false 
-         * @static 
-         */        public static function onceUsingId($id)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->onceUsingId($id);
-        }
-                    /**
-         * Validate a user's credentials.
-         *
-         * @param array $credentials
-         * @return bool 
+         * @param array<string, mixed> $credentials The user credentials.
+         * @return bool True if the credentials are valid, false otherwise.
          * @static 
          */        public static function validate($credentials = [])
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
+                        /** @var \App\Services\Auth\JwtGuard $instance */
                         return $instance->validate($credentials);
         }
                     /**
-         * Attempt to authenticate using HTTP Basic Auth.
+         * Check if the user is authenticated.
          *
-         * @param string $field
-         * @param array $extraConditions
-         * @return \Symfony\Component\HttpFoundation\Response|null 
-         * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+         * @return bool True if the user is authenticated, false otherwise.
          * @static 
-         */        public static function basic($field = 'email', $extraConditions = [])
+         */        public static function check()
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->basic($field, $extraConditions);
+                        /** @var \App\Services\Auth\JwtGuard $instance */
+                        return $instance->check();
         }
                     /**
-         * Perform a stateless HTTP Basic login attempt.
+         * Check if the current user is a guest.
          *
-         * @param string $field
-         * @param array $extraConditions
-         * @return \Symfony\Component\HttpFoundation\Response|null 
-         * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+         * @return bool True if the user is a guest, false otherwise.
          * @static 
-         */        public static function onceBasic($field = 'email', $extraConditions = [])
+         */        public static function guest()
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->onceBasic($field, $extraConditions);
+                        /** @var \App\Services\Auth\JwtGuard $instance */
+                        return $instance->guest();
         }
                     /**
-         * Attempt to authenticate a user using the given credentials.
+         * Get the ID of the currently authenticated user.
          *
-         * @param array $credentials
-         * @param bool $remember
-         * @return bool 
+         * @return int|string|null The ID of the authenticated user or null if not authenticated.
          * @static 
-         */        public static function attempt($credentials = [], $remember = false)
+         */        public static function id()
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->attempt($credentials, $remember);
-        }
-                    /**
-         * Attempt to authenticate a user with credentials and additional callbacks.
-         *
-         * @param array $credentials
-         * @param array|callable|null $callbacks
-         * @param bool $remember
-         * @return bool 
-         * @static 
-         */        public static function attemptWhen($credentials = [], $callbacks = null, $remember = false)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->attemptWhen($credentials, $callbacks, $remember);
-        }
-                    /**
-         * Log the given user ID into the application.
-         *
-         * @param mixed $id
-         * @param bool $remember
-         * @return \App\Models\User|false 
-         * @static 
-         */        public static function loginUsingId($id, $remember = false)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->loginUsingId($id, $remember);
-        }
-                    /**
-         * Log a user into the application.
-         *
-         * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @param bool $remember
-         * @return void 
-         * @static 
-         */        public static function login($user, $remember = false)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        $instance->login($user, $remember);
-        }
-                    /**
-         * Log the user out of the application.
-         *
-         * @return void 
-         * @static 
-         */        public static function logout()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        $instance->logout();
-        }
-                    /**
-         * Log the user out of the application on their current device only.
-         * 
-         * This method does not cycle the "remember" token.
-         *
-         * @return void 
-         * @static 
-         */        public static function logoutCurrentDevice()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        $instance->logoutCurrentDevice();
-        }
-                    /**
-         * Invalidate other sessions for the current user.
-         * 
-         * The application must be using the AuthenticateSession middleware.
-         *
-         * @param string $password
-         * @return \App\Models\User|null 
-         * @throws \Illuminate\Auth\AuthenticationException
-         * @static 
-         */        public static function logoutOtherDevices($password)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->logoutOtherDevices($password);
-        }
-                    /**
-         * Register an authentication attempt event listener.
-         *
-         * @param mixed $callback
-         * @return void 
-         * @static 
-         */        public static function attempting($callback)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        $instance->attempting($callback);
-        }
-                    /**
-         * Get the last user we attempted to authenticate.
-         *
-         * @return \App\Models\User 
-         * @static 
-         */        public static function getLastAttempted()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getLastAttempted();
-        }
-                    /**
-         * Get a unique identifier for the auth session value.
-         *
-         * @return string 
-         * @static 
-         */        public static function getName()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getName();
-        }
-                    /**
-         * Get the name of the cookie used to store the "recaller".
-         *
-         * @return string 
-         * @static 
-         */        public static function getRecallerName()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getRecallerName();
-        }
-                    /**
-         * Determine if the user was authenticated via "remember me" cookie.
-         *
-         * @return bool 
-         * @static 
-         */        public static function viaRemember()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->viaRemember();
-        }
-                    /**
-         * Set the number of minutes the remember me cookie should be valid for.
-         *
-         * @param int $minutes
-         * @return \Illuminate\Auth\SessionGuard 
-         * @static 
-         */        public static function setRememberDuration($minutes)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->setRememberDuration($minutes);
-        }
-                    /**
-         * Get the cookie creator instance used by the guard.
-         *
-         * @return \Illuminate\Contracts\Cookie\QueueingFactory 
-         * @throws \RuntimeException
-         * @static 
-         */        public static function getCookieJar()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getCookieJar();
-        }
-                    /**
-         * Set the cookie creator instance used by the guard.
-         *
-         * @param \Illuminate\Contracts\Cookie\QueueingFactory $cookie
-         * @return void 
-         * @static 
-         */        public static function setCookieJar($cookie)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        $instance->setCookieJar($cookie);
-        }
-                    /**
-         * Get the event dispatcher instance.
-         *
-         * @return \Illuminate\Contracts\Events\Dispatcher 
-         * @static 
-         */        public static function getDispatcher()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getDispatcher();
-        }
-                    /**
-         * Set the event dispatcher instance.
-         *
-         * @param \Illuminate\Contracts\Events\Dispatcher $events
-         * @return void 
-         * @static 
-         */        public static function setDispatcher($events)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        $instance->setDispatcher($events);
-        }
-                    /**
-         * Get the session store used by the guard.
-         *
-         * @return \Illuminate\Contracts\Session\Session 
-         * @static 
-         */        public static function getSession()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getSession();
-        }
-                    /**
-         * Return the currently cached user.
-         *
-         * @return \App\Models\User|null 
-         * @static 
-         */        public static function getUser()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getUser();
+                        /** @var \App\Services\Auth\JwtGuard $instance */
+                        return $instance->id();
         }
                     /**
          * Set the current user.
          *
-         * @param \Illuminate\Contracts\Auth\Authenticatable $user
-         * @return \Illuminate\Auth\SessionGuard 
+         * @param mixed $user The user instance.
+         * @return \App\Services\Auth\JwtGuard 
          * @static 
          */        public static function setUser($user)
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
+                        /** @var \App\Services\Auth\JwtGuard $instance */
                         return $instance->setUser($user);
-        }
-                    /**
-         * Get the current request instance.
-         *
-         * @return \Symfony\Component\HttpFoundation\Request 
-         * @static 
-         */        public static function getRequest()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getRequest();
-        }
-                    /**
-         * Set the current request instance.
-         *
-         * @param \Symfony\Component\HttpFoundation\Request $request
-         * @return \Illuminate\Auth\SessionGuard 
-         * @static 
-         */        public static function setRequest($request)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->setRequest($request);
-        }
-                    /**
-         * Get the timebox instance used by the guard.
-         *
-         * @return \Illuminate\Support\Timebox 
-         * @static 
-         */        public static function getTimebox()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getTimebox();
-        }
-                    /**
-         * Determine if the current user is authenticated. If not, throw an exception.
-         *
-         * @return \App\Models\User 
-         * @throws \Illuminate\Auth\AuthenticationException
-         * @static 
-         */        public static function authenticate()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->authenticate();
         }
                     /**
          * Determine if the guard has a user instance.
          *
-         * @return bool 
+         * @return bool True if the guard has a user instance, false otherwise.
          * @static 
          */        public static function hasUser()
         {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
+                        /** @var \App\Services\Auth\JwtGuard $instance */
                         return $instance->hasUser();
-        }
-                    /**
-         * Determine if the current user is authenticated.
-         *
-         * @return bool 
-         * @static 
-         */        public static function check()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->check();
-        }
-                    /**
-         * Determine if the current user is a guest.
-         *
-         * @return bool 
-         * @static 
-         */        public static function guest()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->guest();
-        }
-                    /**
-         * Forget the current user.
-         *
-         * @return \Illuminate\Auth\SessionGuard 
-         * @static 
-         */        public static function forgetUser()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->forgetUser();
-        }
-                    /**
-         * Get the user provider used by the guard.
-         *
-         * @return \Illuminate\Contracts\Auth\UserProvider 
-         * @static 
-         */        public static function getProvider()
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        return $instance->getProvider();
-        }
-                    /**
-         * Set the user provider used by the guard.
-         *
-         * @param \Illuminate\Contracts\Auth\UserProvider $provider
-         * @return void 
-         * @static 
-         */        public static function setProvider($provider)
-        {
-                        /** @var \Illuminate\Auth\SessionGuard $instance */
-                        $instance->setProvider($provider);
-        }
-                    /**
-         * Register a custom macro.
-         *
-         * @param string $name
-         * @param object|callable $macro
-         * @param-closure-this static  $macro
-         * @return void 
-         * @static 
-         */        public static function macro($name, $macro)
-        {
-                        \Illuminate\Auth\SessionGuard::macro($name, $macro);
-        }
-                    /**
-         * Mix another object into the class.
-         *
-         * @param object $mixin
-         * @param bool $replace
-         * @return void 
-         * @throws \ReflectionException
-         * @static 
-         */        public static function mixin($mixin, $replace = true)
-        {
-                        \Illuminate\Auth\SessionGuard::mixin($mixin, $replace);
-        }
-                    /**
-         * Checks if macro is registered.
-         *
-         * @param string $name
-         * @return bool 
-         * @static 
-         */        public static function hasMacro($name)
-        {
-                        return \Illuminate\Auth\SessionGuard::hasMacro($name);
-        }
-                    /**
-         * Flush the existing macros.
-         *
-         * @return void 
-         * @static 
-         */        public static function flushMacros()
-        {
-                        \Illuminate\Auth\SessionGuard::flushMacros();
         }
             }
             /**
@@ -18049,6 +17733,24 @@ namespace Illuminate\Support\Facades {
             }
     }
 
+namespace L5Swagger {
+            /**
+     * 
+     *
+     */        class L5SwaggerFacade {
+                    /**
+         * 
+         *
+         * @throws L5SwaggerException
+         * @static 
+         */        public static function generateDocs()
+        {
+                        /** @var \L5Swagger\Generator $instance */
+                        return $instance->generateDocs();
+        }
+            }
+    }
+
 namespace Illuminate\Http {
             /**
      * 
@@ -21707,6 +21409,7 @@ namespace  {
             class Validator extends \Illuminate\Support\Facades\Validator {}
             class View extends \Illuminate\Support\Facades\View {}
             class Vite extends \Illuminate\Support\Facades\Vite {}
+            class L5Swagger extends \L5Swagger\L5SwaggerFacade {}
     }
 
 
