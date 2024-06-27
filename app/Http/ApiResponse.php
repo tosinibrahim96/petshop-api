@@ -8,32 +8,33 @@ use Illuminate\Http\JsonResponse;
 
 class ApiResponse
 {
-  /**
-   * Return a successful JSON response with mixed(object|JsonSerializable) data
-   *
-   * @param int $code
-   * @param string|null $message
-   * @param mixed $data
-   * @return JsonResponse
-   */
-  public static function send(bool $status, int $code, string $message = null, $data = []) : JsonResponse {
-
-    $response = [
-      'status' => $status,
-      'message' => $message,
-      'data' => $data
-    ];
-    return response()->json($response, $code, [], JSON_PRESERVE_ZERO_FRACTION);
-  }
-  /**
-     * Set success response
+    /**
+     * Return a successful JSON response with mixed(object|JsonSerializable) data
      *
-     * @param $message
+     * @param int $code
+     * @param string|null $message
      * @param mixed $data
-     *
      * @return JsonResponse
      */
-    public static function sendWithResource(bool $status, int $code, string $message=null, $data): JsonResponse
+    public static function send(bool $status, int $code, string $message = null, $data = []): JsonResponse
+    {
+
+        $response = [
+          'status' => $status,
+          'message' => $message,
+          'data' => $data
+        ];
+        return response()->json($response, $code, [], JSON_PRESERVE_ZERO_FRACTION);
+    }
+    /**
+       * Set success response
+       *
+       * @param $message
+       * @param mixed $data
+       *
+       * @return JsonResponse
+       */
+    public static function sendWithResource(bool $status, int $code, string $message = null, $data): JsonResponse
     {
         $response = [
             'status' => $status,
@@ -55,7 +56,7 @@ class ApiResponse
      *
      * @return JsonResponse
      */
-    public static function sendWithCollection(bool $status, int $code, string $message=null, $collection): JsonResponse
+    public static function sendWithCollection(bool $status, int $code, string $message = null, $collection): JsonResponse
     {
         return response()->json(array_merge([
             'status' => $status,

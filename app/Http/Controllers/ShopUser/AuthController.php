@@ -9,13 +9,12 @@ use App\Http\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Resources\AuthResource;
-use Auth;
 use Illuminate\Http\Response;
 
 /**
  * Class AuthController
  * Handles the authentication logic for shop users.
- * 
+ *
  * @OA\Info(title="Pet Shop API - Swagger Documentation", version="1.0")
  */
 class AuthController extends Controller

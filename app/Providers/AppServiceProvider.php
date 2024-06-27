@@ -27,7 +27,7 @@ class AppServiceProvider extends ServiceProvider
         Auth::extend('jwt', function (Application $app, string $name, array $config) {
 
             $provider = Auth::createUserProvider($config['provider']);
-            
+
             if (is_null($provider)) {
                 return;
             }

@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 /**
  * Class UserController
  * Handles user account creation and related actions.
- * 
+ *
  */
 class UserController extends Controller
 {
@@ -77,7 +77,7 @@ class UserController extends Controller
     {
         $user = $this->createUserAction->execute($request->validated());
         $result = $this->loginAction->execute(['email' => $user->email, 'password' => $request->validated()['password']]);
-        
+
         return ApiResponse::send(true, Response::HTTP_OK, "Account created successfully", $result);
     }
 }

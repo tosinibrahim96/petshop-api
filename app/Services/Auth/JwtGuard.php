@@ -73,7 +73,7 @@ class JwtGuard implements Guard
         try {
             $jwtService = app(JwtService::class);
             $token = $jwtService->parseToken($token);
-            
+
             if ($jwtService->validateToken($token)) {
                 $claims = $token->claims();
                 $this->user = $this->provider->retrieveById($claims->get('sub'));

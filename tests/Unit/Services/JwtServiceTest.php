@@ -23,12 +23,11 @@ class JwtServiceTest extends TestCase
         $privateKey = InMemory::file(base_path('keys/private_key.pem'));
         $publicKey = InMemory::file(base_path('keys/public_key.pem'));
 
-       // Create actual configuration instance
-       $this->config = Configuration::forAsymmetricSigner(
-        new Sha256(),
-        $privateKey,
-        $publicKey
-    );
+        $this->config = Configuration::forAsymmetricSigner(
+            new Sha256(),
+            $privateKey,
+            $publicKey
+        );
 
         // Create the JWT service with the actual configuration
         $this->jwtService = new JwtService();
@@ -44,7 +43,7 @@ class JwtServiceTest extends TestCase
     {
         $claims = ['sub' => '123', 'role' => 'admin'];
         $token = $this->jwtService->createToken($claims);
-        
+
         $this->assertIsString($token);
     }
 
