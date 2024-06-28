@@ -5,7 +5,6 @@ namespace Tests\Feature\Controllers;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class UserControllerTest extends TestCase
@@ -98,7 +97,7 @@ class UserControllerTest extends TestCase
     public function testUpdateUserSuccessfully()
     {
         $user = User::factory()->create();
-        
+
         $this->actingAs($user, 'api');
 
         $data = [
@@ -133,7 +132,7 @@ class UserControllerTest extends TestCase
     public function testUpdateUserValidationFailure()
     {
         $user = User::factory()->create();
-        
+
         $this->actingAs($user, 'api');
 
         $data = [
@@ -167,7 +166,7 @@ class UserControllerTest extends TestCase
     public function testDeleteUserSuccessfully()
     {
         $user = User::factory()->create();
-        
+
         $this->actingAs($user, 'api');
 
         $response = $this->deleteJson('/api/v1/user');

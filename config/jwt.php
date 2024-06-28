@@ -12,5 +12,5 @@ return [
     /**
      * In hours
      */
-    'expiration' => env('JWT_EXPIRATION', 1)
+    'expiration' => env('JWT_EXPIRATION', 2)
 ];

@@ -3,6 +3,7 @@
 namespace Tests\Unit\Services\Auth;
 
 use App\Services\Auth\JwtService;
+use Cache;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
@@ -88,5 +89,31 @@ class JwtServiceTest extends TestCase
         $constraints = [new IssuedBy('http://invalid-url')]; // Invalid issuer URL
 
         $this->assertFalse($validator->validate($parsedToken, ...$constraints));
+    }
+
+    public function testBlacklistToken()
+    {
+        Cache::shouldReceive('store->put')
+            ->once()
+            ->withArgs(function ($key, $value, $expiresAt) {
+                return strpos($key, 'blacklisted_token_') === 0 && $value === 'true' && is_int($expiresAt);
+            });
+
+        $claims = ['sub' => '123', 'role' => 'admin'];
+        $token = $this->jwtService->createToken($claims);
+
+        $parsedToken = $this->jwtService->parseToken($token);
+        $this->jwtService->blacklistToken($token);
+
+        $tokenId = $parsedToken->claims()->get('jti');
+
+        Cache::shouldReceive('store->has')
+            ->once()
+            ->with("blacklisted_token_{$tokenId}")
+            ->andReturn(true);
+
+        $isBlacklisted = Cache::store('redis')->has("blacklisted_token_{$tokenId}");
+
+        $this->assertTrue($isBlacklisted);
     }
 }

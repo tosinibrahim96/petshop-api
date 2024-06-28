@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Auth;
 
+use Cache;
 use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 
 /**
@@ -79,9 +79,30 @@ class JwtService
      */
     public function validateToken(Token $token): bool
     {
+        $tokenId = $token->claims()->get('jti');
+        if (Cache::store('redis')->get("blacklisted_token_{$tokenId}")) {
+            return false;
+        }
+
         $constraints = $this->config->validationConstraints();
         $constraints[] = new IssuedBy(config('app.url'));
 
         return $this->config->validator()->validate($token, ...$constraints);
+    }
+
+
+    /**
+     * Blacklists a given JWT.
+     *
+     * @param Token $token The JWT to blacklist.
+     * @return void
+     */
+    public function blacklistToken(string $jwt): void
+    {
+        $token = $this->parseToken($jwt);
+
+        $tokenId = $token->claims()->get('jti');
+        $expiresAt = $token->claims()->get('exp')->getTimestamp();
+        Cache::store('redis')->put("blacklisted_token_{$tokenId}", 'true', $expiresAt - time());
     }
 }

@@ -191,4 +191,20 @@ class JwtGuard implements Guard
     {
         return $this->user ? true : false;
     }
+
+    /**
+     * Invalidate the current token.
+     *
+     * @return void
+     */
+    public function logout()
+    {
+        $token = $this->getTokenForRequest();
+
+        if ($token) {
+            app(JwtService::class)->blacklistToken($token);
+        }
+
+        $this->user = null;
+    }
 }

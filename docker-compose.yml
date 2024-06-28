@@ -16,6 +16,7 @@ services:
     depends_on:
       - webserver
       - db
+      - redis
     networks:
       - petshop-api
 
@@ -50,6 +51,14 @@ services:
     networks:
       - petshop-api
 
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - petshop-api
 networks:
   petshop-api:
 
