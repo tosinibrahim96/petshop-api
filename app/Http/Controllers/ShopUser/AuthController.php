@@ -46,7 +46,12 @@ class AuthController extends Controller
      *     tags={"Shop User"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/LoginRequest")
+     *         @OA\MediaType(
+     *             mediaType="application/x-www-form-urlencoded",
+     *             @OA\Schema(
+     *                 ref="#/components/schemas/LoginRequest"
+     *             )
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,

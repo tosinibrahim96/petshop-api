@@ -30,11 +30,49 @@ class UserRepository
     /**
      * Find a user by email.
      *
-     * @param string $email
-     * @return User|null
+     * @param string $email User email
+     * @return User|null The user instance or null if not found
      */
     public function findByEmail(string $email): ?User
     {
         return User::where('email', $email)->first();
+    }
+
+    /**
+     * Find a user by ID.
+     *
+     * @param int $id User ID
+     * @return User|null The user instance or null if not found
+     */
+    public function find(int $id): ?User
+    {
+        return User::find($id);
+    }
+
+    /**
+     * Update a user by ID.
+     *
+     * @param array $data User data to update
+     * @param int $id User ID
+     * @return User|null The updated user instance or null if not found
+     */
+    public function update(array $data, int $id): ?User
+    {
+        $user = $this->find($id);
+        if ($user) {
+            $user->update($data);
+        }
+        return $user;
+    }
+
+    /**
+     * Delete a user by ID.
+     *
+     * @param int $id User ID
+     * @return bool True if the user was deleted, false otherwise
+     */
+    public function delete(int $id): bool
+    {
+        return User::destroy($id) > 0;
     }
 }

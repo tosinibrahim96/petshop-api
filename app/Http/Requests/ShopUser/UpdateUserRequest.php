@@ -8,19 +8,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * @OA\Schema(
- *     schema="CreateUserRequest",
+ *     schema="UpdateUserRequest",
  *     type="object",
- *     required={"first_name", "last_name", "email", "password", "password_confirmation", "address", "phone_number"},
+ *     required={"first_name", "last_name", "email"},
  *     @OA\Property(property="first_name", type="string"),
  *     @OA\Property(property="last_name", type="string"),
  *     @OA\Property(property="email", type="string", format="email"),
- *     @OA\Property(property="password", type="string", format="password"),
- *     @OA\Property(property="password_confirmation", type="string", format="password"),
  *     @OA\Property(property="address", type="string"),
  *     @OA\Property(property="phone_number", type="string")
  * )
  */
-class CreateUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -42,11 +40,9 @@ class CreateUserRequest extends FormRequest
         return [
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'password_confirmation' => 'required',
-            'address' => 'required|string',
-            'phone_number' => 'required|string'
+            'email' => 'required|string|email|max:255|unique:users,email,' . $this->user()->id,
+            'address' => 'nullable|string',
+            'phone_number' => 'nullable|string'
         ];
     }
 }

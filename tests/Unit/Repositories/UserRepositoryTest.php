@@ -58,4 +58,65 @@ class UserRepositoryTest extends TestCase
 
         $this->assertNull($foundUser);
     }
+
+    public function testFindUserById()
+    {
+        $user = User::factory()->create();
+
+        $foundUser = $this->userRepository->find($user->id);
+
+        $this->assertInstanceOf(User::class, $foundUser);
+        $this->assertEquals($user->id, $foundUser->id);
+    }
+
+    public function testFindUserByIdReturnsNullWhenUserNotFound()
+    {
+        $foundUser = $this->userRepository->find(9999);
+
+        $this->assertNull($foundUser);
+    }
+
+    public function testUpdateUser()
+    {
+        $user = User::factory()->create();
+        $data = [
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+        ];
+
+        $updatedUser = $this->userRepository->update($data, $user->id);
+
+        $this->assertInstanceOf(User::class, $updatedUser);
+        $this->assertEquals('Jane', $updatedUser->first_name);
+        $this->assertEquals('Doe', $updatedUser->last_name);
+    }
+
+    public function testUpdateUserReturnsNullWhenUserNotFound()
+    {
+        $data = [
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+        ];
+
+        $updatedUser = $this->userRepository->update($data, 9999);
+
+        $this->assertNull($updatedUser);
+    }
+
+    public function testDeleteUser()
+    {
+        $user = User::factory()->create();
+
+        $result = $this->userRepository->delete($user->id);
+
+        $this->assertTrue($result);
+        $this->assertNull(User::find($user->id));
+    }
+
+    public function testDeleteUserReturnsFalseWhenUserNotFound()
+    {
+        $result = $this->userRepository->delete(9999);
+
+        $this->assertFalse($result);
+    }
 }

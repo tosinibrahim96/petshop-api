@@ -7,9 +7,6 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * Class LoginRequest
- * Handles validation for user login requests.
- *
  * @OA\Schema(
  *     schema="LoginRequest",
  *     type="object",
