@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ShopUser\AuthController;
 use App\Http\Controllers\ShopUser\UserController;
+use App\Http\Controllers\ShopUser\UserOrderController;
 
 Route::group(['prefix' => 'v1/user'], function () {
 
@@ -15,5 +16,7 @@ Route::group(['prefix' => 'v1/user'], function () {
         Route::get('/', [UserController::class, 'show']);
         Route::put('/edit', [UserController::class, 'update']);
         Route::get('logout', [AuthController::class, 'logout']);
+
+        Route::get('orders', [UserOrderController::class, 'index']);
     });
 });
