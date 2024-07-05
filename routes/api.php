@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\FileController;
 use App\Http\Controllers\ShopUser\AuthController;
 use App\Http\Controllers\ShopUser\UserController;
 use App\Http\Controllers\ShopUser\UserOrderController;
@@ -19,4 +20,14 @@ Route::group(['prefix' => 'v1/user'], function () {
 
         Route::get('orders', [UserOrderController::class, 'index']);
     });
+});
+
+
+Route::group(['prefix' => 'v1'], function () {
+
+    Route::get('file/{uuid}', [FileController::class, 'download']);
+
+    // Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('file/upload', [FileController::class, 'upload']);
+    // });
 });
