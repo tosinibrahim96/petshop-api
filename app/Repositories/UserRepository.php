@@ -7,6 +7,8 @@ namespace App\Repositories;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Class UserRepository
@@ -74,5 +76,59 @@ class UserRepository
     public function delete(int $id): bool
     {
         return User::destroy($id) > 0;
+    }
+
+
+    /**
+     * Get paginated list of non-admin users.
+     *
+     * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getPaginatedUsersWithoutAdmins(array $filters)
+    {
+        $query = User::where('is_admin', false);
+
+        $this->applyFilters($query, $filters);
+
+        $limit = $filters['limit'] ?? 15;
+
+        return $query->paginate($limit);        
+    }
+
+
+
+    /**
+     * Apply filters to the query.
+     *
+     * @param Builder $query
+     * @param array $filters
+     * @return void
+     */
+    private function applyFilters(Builder $query, array $filters): void
+    {
+        if (isset($filters['sort_by'])) {
+            $direction = isset($filters['desc']) && filter_var($filters['desc'], FILTER_VALIDATE_BOOLEAN) ? 'desc' : 'asc';
+            $query->orderBy($filters['sort_by'], $direction);
+        }
+
+        if (isset($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('first_name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('last_name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('email', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+    }
+
+    /**
+     * Find a user by UUID.
+     *
+     * @param string $uuid
+     * @return User|null
+     */
+    public function findByUuid(string $uuid): ?User
+    {
+        return User::where('uuid', $uuid)->first();
     }
 }

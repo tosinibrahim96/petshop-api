@@ -31,6 +31,9 @@ class OrderFactory extends Factory
      */
     public function definition()
     {
+        $orderAmount = $this->faker->randomFloat(2, 50, 50000);
+        $deliveryFee = $orderAmount > 1850 ? $this->faker->randomFloat(2, 10, 500):15.0;
+
         return [
             'user_id' => User::factory(),
             'order_status_id' => OrderStatus::factory(),
@@ -49,8 +52,8 @@ class OrderFactory extends Factory
                 'billing' => $this->faker->address,
                 'shipping' => $this->faker->address,
             ]),
-            'delivery_fee' => $this->faker->randomFloat(2, 0, 50),
-            'amount' => $this->faker->randomFloat(2, 50, 500),
+            'delivery_fee' => $deliveryFee,
+            'amount' => $orderAmount,
             'shipped_at' => $this->faker->dateTime,
         ];
     }
